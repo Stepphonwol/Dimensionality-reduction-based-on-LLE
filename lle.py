@@ -1,11 +1,33 @@
 from sklearn.datasets import fetch_mldata
 from sklearn.neighbors import BallTree
+from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 class LLE:
     def __init__(self):
         print("Fetching input data...")
+        path = "/Users/lumindoec/Downloads/Asian"
+        self.N = 0
+        self.D = 0
+        src_list = []
+        for file in os.listdir(path):
+            if not os.path.isdir(file) and file.endswith('jpg'):
+                im = Image.open(path + "/" + file)
+                print(file)
+                src = np.array(im.convert("L"))
+                self.D = np.size(src)
+                src = src.flatten()
+                print(src.shape)
+                self.N = self.N + 1
+                src_list.append(src)
+        self.X = np.zeros((self.N, self.D))
+        for i, src in enumerate(src_list):
+            self.X[i] = src
+        print(self.X.shape)
+        print(self.X)
+        '''
         raw = fetch_mldata('iris')
         # row : samples; column : features
         self.X = raw.data[0:50]
@@ -13,10 +35,12 @@ class LLE:
         print(self.X)
         self.N = self.X.shape[0]
         self.D = self.X.shape[1]
+        '''
 
     def find_invariance(self):
         self.K = int(input("Number of nearest neighbors: "))
-        self.invariance = []
+        # sparse matrix for embedding
+        self.W = np.zeros((self.N, self.N))
         # for the ball tree, [N, D]
         tree = BallTree(self.X)
         for i in range(self.N):
@@ -36,29 +60,26 @@ class LLE:
             weights = np.dot(pinv_g, unit) / np.dot(np.dot(unit.T, pinv_g), unit)
             print(weights.shape)
             print(weights)
-            self.invariance.append(weights)
+            # one to one
+            for j in range(self.K):
+                self.W[i][ind[0][j+1]] = weights[j]
+        print(self.W[:,1])
 
 
     def embedding(self):
         I = np.eye(self.N, dtype=int)
-        W = np.zeros((self.N, self.N))
-        #self.low_repre = []
-        for weight in self.invariance:
-            W[0:self.K] = weight
-            target = np.dot(I - W, np.transpose(I - W))
-            eigenvalues, eigenvectors = np.linalg.eig(target)
-            eig_seq = np.argsort(eigenvalues)
-            # discard the first eigenvalue
-            eig_seq_indice = eig_seq[1:3]
-            new_eig_vec = eigenvectors[:, eig_seq_indice]
-            print(new_eig_vec.shape)
-            print(new_eig_vec)
-            plt.scatter(new_eig_vec[:,0], new_eig_vec[:,1])
-            #self.low_repre.append(new_eig_vec)
+        target = np.dot(I - self.W, np.transpose(I - self.W))
+        eigenvalues, eigenvectors = np.linalg.eig(target)
+        eig_seq = np.argsort(eigenvalues)
+        #discard the first eigenvalue
+        eig_seq_indice = eig_seq[1:3]
+        new_eig_vec = eigenvectors[:, eig_seq_indice]
+        print(new_eig_vec.shape)
+        print(new_eig_vec)
+        plt.scatter(new_eig_vec[:,0], new_eig_vec[:,1], c='b')
         plt.show()
 
     def analyze(self):
-        #self.KNN()
         self.find_invariance()
         self.embedding()
 
