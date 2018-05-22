@@ -53,9 +53,9 @@
 ##### Results
 - The following result is based on the first part of the Iris flower dataset, in which four properties of the same kind of flower, setosa, are listed.
     - $N=50$， $D=4$， $K=3$， $d=2$
-    ![](Figure_1.png)
+    ![](m_Figure_1.png)
     - $N=50$, $D=4$, $K=4$, $d=2$
-    ![](Figure_2.png)
+    ![](m_Figure_2.png)
 - Note that when $K\geq4$, the number of nearest neighbours will be bigger than the number of dimensions, in this case, the gram matrix must be conditioned by adding a small multiple of the identity matrix.
 #### The definition of manifold
 - In my own words : something **invariant**.
