@@ -52,10 +52,34 @@
 ```
 ##### Results
 - The following result is based on the first part of the Iris flower dataset, in which four properties of the same kind of flower, setosa, are listed.
-    - $N=50$， $D=4$， $K=3$， $d=2$
-    ![](m_Figure_1.png)
-    - $N=50$, $D=4$, $K=4$, $d=2$
-    ![](m_Figure_2.png)
+    - $N=1284$， $D=62500$， $K=3$， $d=2$
+    ![](real_Figure_2d_3neighbors.png)
+    - $N=1284$, $D=62500$, $K=3$, $d=3$
+    ![](real_Figure_3d_3neighbors.png)
+    - $N=1284$, $D=62500$, $K=4$, $d=2$
+    ![](real_Figure_2d_4neighbors.png)
+    - $N=1284$, $D=62500$, $K=4$, $d=3$
+    ![](real_Figure_3d_4neighbors.png)
+    - $N=1284$, $D=62500$, $K=5$, $d=2$
+    ![](real_Figure_2d_5neighbors.png)
+    - $N=1284$, $D=62500$, $K=5$, $d=3$
+    ![](real_Figure_3d_5neighbors.png)
+    - $N=1284$, $D=62500$, $K=6$, $d=2$
+    ![](real_Figure_2d_6neighbors.png)
+    - $N=1284$, $D=62500$, $K=6$, $d=3$
+    ![](real_Figure_3d_6neighbors.png)
+    - $N=1284$, $D=62500$, $K=7$, $d=2$
+    ![](real_Figure_2d_7neighbors.png)
+    - $N=1284$, $D=62500$, $K=7$, $d=3$
+    ![](real_Figure_3d_7neighbors.png)
+    - $N=1284$, $D=62500$, $K=100$, $d=2$
+    ![](real_Figure_2d_100neighbors.png)
+    - $N=1284$, $D=62500$, $K=100$, $d=3$
+    ![](real_Figure_3d_100neighbors.png)
+    - $N=1284$, $D=62500$, $K=1000$, $d=2$
+    ![](real_Figure_2d_1000neighbors.png)
+    - $N=1284$, $D=62500$, $K=1000$, $d=3$
+    ![](real_Figure_3d_1000neighbors.png)
 - Note that when $K\geq4$, the number of nearest neighbours will be bigger than the number of dimensions, in this case, the gram matrix must be conditioned by adding a small multiple of the identity matrix.
 #### The definition of manifold
 - In my own words : something **invariant**.
