@@ -13,7 +13,8 @@
 ```PYTHON
     def find_invariance(self):
         self.K = int(input("Number of nearest neighbors: "))
-        self.invariance = []
+        # sparse matrix for embedding
+        self.W = np.zeros((self.N, self.N))
         # for the ball tree, [N, D]
         tree = BallTree(self.X)
         for i in range(self.N):
@@ -21,7 +22,6 @@
             bold_x = np.zeros((self.D, self.K))
             neighbors = np.zeros((self.D, self.K))
             unit = np.ones((self.K, 1))
-            # Ball tree query will return the data point itself for the nearest neighbor, thus we should pass (K+1)
             dist, ind = tree.query([self.X[i]], k=self.K + 1)
             for j in range(self.K):
                 bold_x[:,j] = self.X[i]
@@ -30,25 +30,30 @@
             gram_matrix = np.dot(np.transpose(diff), diff)
             pinv_g = np.linalg.pinv(gram_matrix)
             weights = np.dot(pinv_g, unit) / np.dot(np.dot(unit.T, pinv_g), unit)
-            self.invariance.append(weights)
+            # one to one
+            for j in range(self.K):
+                self.W[i][ind[0][j+1]] = weights[j]
 ```
 - $embedding()$
 ```PYTHON
     def embedding(self):
         I = np.eye(self.N, dtype=int)
-        W = np.zeros((self.N, self.N))
-        for weight in self.invariance:
-            # W : Sparse matrix
-            W[0:self.K] = weight
-            target = np.dot(I - W, np.transpose(I - W))
-            eigenvalues, eigenvectors = np.linalg.eig(target)
-            eig_seq = np.argsort(eigenvalues)
-            # discard the first eigenvalue
-            eig_seq_indice = eig_seq[1:3]
-            new_eig_vec = eigenvectors[:, eig_seq_indice]
-            plt.scatter(new_eig_vec[:,0], new_eig_vec[:,1])
+        target = np.dot(I - self.W, np.transpose(I - self.W))
+        eigenvalues, eigenvectors = np.linalg.eig(target)
+        eig_seq = np.argsort(eigenvalues)
+        #discard the first eigenvalue
+        eig_seq_indice_2d = eig_seq[1:3]
+        eig_seq_indice_3d = eig_seq[1:4]
+        new_eig_vec_2d = eigenvectors[eig_seq_indice_2d]
+        new_eig_vec_3d = eigenvectors[eig_seq_indice_3d]
+        plt.figure(1)
+        plt.subplot(211)
+        plt.scatter(new_eig_vec_2d[0].real, new_eig_vec_2d[1].real, edgecolors='white', alpha=0.5, c='b')
+        plt.title("d=2")
+        ax = plt.figure().add_subplot(212, projection='3d')
+        ax.scatter(new_eig_vec_3d[0].real, new_eig_vec_3d[1].real, new_eig_vec_3d[2].real)
+        plt.title("d=3")
         plt.show()
-        plt.savefig("test.jpg")
 ```
 ##### Results
 - The following result is based on the first part of the Iris flower dataset, in which four properties of the same kind of flower, setosa, are listed.
